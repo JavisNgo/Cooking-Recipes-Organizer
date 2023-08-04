@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.9.0/css/all.min.css"
+        integrity="sha512-q3eWabyZPc1XTCmF+8/LuE1ozpg5xxn7iO89yfSOd5/oKvyqLngoNGsx8jq92Y8eXJ/IRxQbEC+FGSYxtk2oiw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+</head>
+
+<body>
+    <div class="container">
+
+        <button>Share this story</button>
+    </div>
+
+    <div class="overlay"></div>
+    <div class="share">
+        <h2>Share now</h2>
+
+        <!-- facebook -->
+        <a class="facebook" target="blank"><i class="fab fa-facebook"></i></a>
+
+        <!-- twitter -->
+        <a class="twitter" target="blank"><i class="fab fa-twitter"></i></a>
+
+        <!-- linkedin -->
+        <a class="linkedin" target="blank"><i class="fab fa-linkedin"></i></a>
+
+        <!-- reddit -->
+        <a class="reddit" target="blank"><i class="fab fa-reddit"></i></a>
+
+        <!-- whatsapp-->
+        <a class="whatsapp" target="blank"><i class="fab fa-whatsapp"></i></a>
+
+        <!-- telegram-->
+        <a class="telegram" target="blank"><i class="fab fa-telegram"></i></a>
+
+        <a class="google" target="_blank"><i class="fab fa-google"></i></a>
+
+    </div>
+    <script>
+      
+    </script>
+    <script src="script.js"></script>
+    <style>
+        body{
+    margin:0;
+    font-family: 'Nunito';
+    font-size: 24px;
+  
+  }
+  
+  .container{
+    width: 80%;
+    margin: 4em auto;
+  
+   
+  }
+  .container a{
+    
+        border:none;
+        outline: none;
+        padding: 1em 1.5em;
+        font-size: 1rem;
+        margin-top: 2em;
+        cursor: pointer;
+        background: rgb(158, 0, 250);
+        color:white;
+        font-weight: bold;
+        will-change: background;
+        transition: background 1s;
+    
+      
+  }
+  
+  .overlay{
+    opacity: 1;
+    position: absolute;
+    z-index: 0;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+  }
+  .share ,.overlay{
+    display: none;
+  }
+  .show-share{
+   display: block; 
+  }
+  .share{
+    position: absolute;
+    left: 0;
+    right:0;
+    top:30%;
+    margin:auto;
+    width: 50%;
+    z-index: 1;
+    padding: 1em;
+    background-color: white;
+    border-radius: 15px;
+  }
+  .share h2{
+    margin:0;
+    margin-bottom: 20px;
+    margin-left: 10px;
+    
+    
+  }
+  .share a{
+    padding:35px;
+    font-size: 30px;
+  }
+  .share button{
+    border:none;
+    padding: .8em 1.2em;
+    margin-top:3em;
+    width: 32%;
+    cursor: pointer;
+  }
+
+  #share-buttons i {
+    font-size: 100px;
+    margin: 20px;
+  }
+  .facebook {
+        color: #3b5998;
+  }
+  .twitter {
+      color: #55acee;
+  }
+  .linkedin {
+      color: #0077b5;
+  }
+  .reddit {
+      color: #cb2027;
+  }
+  .whatsapp {
+      color: #25D366;
+  }
+  .telegram {
+      color: #229ED9;
+  }
+  .instagram{
+   color:red ;
+  }
+  .facebook, .twitter, .linkedin, .reddit, .whatsapp, .telegram .instagram {
+    opacity: 0.6;
+  }
+  .facebook:hover, .twitter:hover, .linkedin:hover, .reddit:hover, .whatsapp:hover, .telegram:hover, .instagram {
+    opacity: 0.9;
+  }
+    </style>
+</body>
+
+</html>
+
+
+
+
+
+
+
+
+
+
+
+let nav = 0;
+let clicked = null;
+let events = localStorage.getItem('events') ? JSON.parse(localStorage.getItem('events')) : [];
+
+const calendar = document.getElementById('calendar');
+const newEventModal = document.getElementById('newEventModal');
+const deleteEventModal = document.getElementById('deleteEventModal');
+const backDrop = document.getElementById('modalBackDrop');
+const eventTitleInput = document.getElementById('eventTitleInput');
+
+
+const weekdays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
+function openModal(date) {
+ 
+  clicked = date;
+    
+
+  const eventForDay = events.find(e => e.date === clicked);
+  
+  if (eventForDay) {
+   
+    document.getElementById('eventText').innerText =  eventForDay.title;
+  
+    deleteEventModal.style.display = 'block';
+  } else {
+    newEventModal.style.display = 'block';
+  }
+
+  backDrop.style.display = 'block';
+   const formattedDate = new Date(date).toLocaleDateString('en-us', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  });
+  
+  document.getElementById('selectedDateInput').value = formattedDate;
+  document.getElementById('selectedDateHidden').value = formattedDate;
+  document.getElementById('eventTitleInput').value = svRecipeID;
+     
+}
+
+
+
+function load() {
+  const dt = new Date();
+
+  if (nav !== 0) {
+    dt.setMonth(new Date().getMonth() + nav);
+  }
+
+  const day = dt.getDate();
+  const month = dt.getMonth();
+  const year = dt.getFullYear();
+
+  const firstDayOfMonth = new Date(year, month, 1);
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  
+  const dateString = firstDayOfMonth.toLocaleDateString('en-us', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'numeric',
+    day: 'numeric',
+  });
+  const paddingDays = weekdays.indexOf(dateString.split(', ')[0]);
+
+  document.getElementById('monthDisplay').innerText = 
+    ${dt.toLocaleDateString('en-us', { month: 'long' })} ${year};
+
+  calendar.innerHTML = '';
+
+  for(let i = 1; i <= paddingDays + daysInMonth; i++) {
+    const daySquare = document.createElement('div');
+    daySquare.classList.add('day');
+
+    const dayString = ${month + 1}/${i - paddingDays}/${year};
+
+    if (i > paddingDays) {
+      daySquare.innerText = i - paddingDays;
+      const eventForDay = events.find(e => e.date === dayString);
+
+      if (i - paddingDays === day && nav === 0) {
+        daySquare.id = 'currentDay';
+      }
+        
+      if (eventForDay && userID) {
+        const eventDiv = document.createElement('div');
+        eventDiv.classList.add('event');
+        eventDiv.innerText = eventForDay.title;
+        daySquare.appendChild(eventDiv);
+      }
+
+      daySquare.addEventListener('click', () => openModal(dayString));
+    } else {
+      daySquare.classList.add('padding');
+    }
+
+    calendar.appendChild(daySquare);    
+  }
+}
+
+function closeModal() {
+  eventTitleInput.classList.remove('error');
+  newEventModal.style.display = 'none';
+  deleteEventModal.style.display = 'none';
+  backDrop.style.display = 'none';
+  eventTitleInput.value = '';
+  clicked = null;
+  load();
+}
+
+function saveEvent() {
+    const selectedRecipeID = eventTitleInput.value;
+  const selectedRecipeName = eventTitleInput.options[eventTitleInput.selectedIndex].text;
+  
+   if (selectedRecipeID) {
+    eventTitleInput.classList.remove('error');
+
+    events.push({
+      date: clicked,
+      title: selectedRecipeName,
+      recipeID: selectedRecipeID,
+     
+    });
+     document.getElementById('svRecipeIDHidden').value = selectedRecipeID;
+    document.getElementById('svRecipeNameHidden').value = selectedRecipeName;
+
+    // Set the value of the hidden input field with the svRecipeID
+   
+    // Submit the form to the servlet
+    const form = document.getElementById('eventForm');
+    form.submit();
+
+    localStorage.setItem('events', JSON.stringify(events));
+    closeModal();
+  } else {
+    eventTitleInput.classList.add('error');
+  }
+}
+document.getElementById('addMoreButton').addEventListener('click', () => {
+  // Get the selected date from the global variable "clicked"
+  if (clicked) {
+    // Open the new event modal
+    newEventModal.style.display = 'block';
+    backDrop.style.display = 'block';
+  }
+});
+
+function addMoreEvent(date){
+    closeModal();
+    clicked = date;
+
+  // Check if an event exists for the selected date
+  const eventForDay = events.find(e => e.date === clicked);
+
+  if (eventForDay) {
+    // If an event exists, display the delete event modal
+    document.getElementById('eventText').innerText = eventForDay.title;
+    deleteEventModal.style.display = 'block';
+  } else {
+    // If no event exists, display the new event modal
+    newEventModal.style.display = 'block';
+  }
+
+  backDrop.style.display = 'block';
+    
+    
+}
+
+
+function deleteEvent() {
+  events = events.filter(e => e.date !== clicked);
+  localStorage.setItem('events', JSON.stringify(events));
+  closeModal();
+}
+
+function initButtons() {
+  document.getElementById('nextButton').addEventListener('click', () => {
+    nav++;
+    load();
+  });
+
+  document.getElementById('backButton').addEventListener('click', () => {
+    nav--;
+    load();
+  });
+
+  document.getElementById('saveButton').addEventListener('click', saveEvent);
+  document.getElementById('cancelButton').addEventListener('click', closeModal);
+  document.getElementById('deleteButton').addEventListener('click', deleteEvent);
+  document.getElementById('closeButton').addEventListener('click', closeModal);
+  document.getElementById('addMoreButton').addEventListener('click', addMoreEvent);
+ 
+}
+
+initButtons();
+load();

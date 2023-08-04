@@ -1,0 +1,107 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package swp.controller;
+
+import java.io.IOException;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import swp.ro.User.UserDAO;
+import swp.ro.User.UserDTO;
+
+/**
+ *
+ * @author phamt
+ */
+@WebServlet(name = "SavePasswordController", urlPatterns = {"/SavePasswordController"})
+public class SavePasswordController extends HttpServlet {
+
+    /**
+     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
+     * methods.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
+    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        response.setContentType("text/html;charset=UTF-8");
+        UserDTO user_1 = (UserDTO) request.getSession().getAttribute("LOGIN_USER");
+        if (user_1 != null ) {
+        try{
+                 int userID = user_1.getUserID();
+                String Opassword = request.getParameter("Opassword");
+                String Npassword = request.getParameter("Npassword");
+                String Cpassword = request.getParameter("Cpassword");
+                UserDAO uDAO = new UserDAO();
+                UserDTO user = uDAO.checkPass(Opassword, userID);
+
+                if (!Npassword.equals(Cpassword)) {
+                    request.setAttribute("failed", "The password doesn't match");
+                    request.getRequestDispatcher("changePass.jsp?userID=" + userID).forward(request, response);
+                } else {
+                    if (user == null) {
+                        request.setAttribute("failed", "Wrong old password");
+                        request.getRequestDispatcher("changePass.jsp?userID=" + userID).forward(request, response);
+                    } else {
+                        uDAO.changePass(Npassword, userID);
+                        request.setAttribute("success", "Password changed");
+                        request.getSession().invalidate();
+                        response.sendRedirect("MainController");
+                    }
+                }
+            } catch (Exception e) {
+                response.sendRedirect("error.jsp");
+            }
+        } else {
+            response.sendRedirect("error.jsp");
+        }
+    }
+
+    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
+    /**
+     * Handles the HTTP <code>GET</code> method.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        processRequest(request, response);
+    }
+
+    /**
+     * Handles the HTTP <code>POST</code> method.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        processRequest(request, response);
+    }
+
+    /**
+     * Returns a short description of the servlet.
+     *
+     * @return a String containing servlet description
+     */
+    @Override
+    public String getServletInfo() {
+        return "Short description";
+    }// </editor-fold>
+
+}
